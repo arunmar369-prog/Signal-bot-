@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Live Forex Signal Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070f1d;--pn:#0c1a2e;--pn2:#10233d;--bd:#1b2f4a;--tx:#e6edf7;--mu:#8aa0bd;--gr:#12b76a;--rd:#f04438;--am:#f5b82e;--bl:#2e90fa;--or:#f79009;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:'Hind','Noto Sans Devanagari',system-ui,sans-serif;font-size:15px;line-height:1.35}
+.num{font-variant-numeric:tabular-nums}
+header{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bd)}
+h1{font-size:22px;font-weight:700;color:var(--gr)}
+header p{color:var(--mu);font-size:13px}
+.badges{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--gr)}
+.pill{background:var(--am);color:#1a1200;font-weight:700;border-radius:999px;padding:3px 12px;font-size:13px}
+.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 290px;gap:14px;padding:14px 16px}
+nav{display:flex;flex-direction:column;gap:4px}
+nav button{all:unset;cursor:pointer;padding:10px 12px;border-radius:8px;color:var(--mu);font-weight:500}
+nav button.on{background:var(--bl);color:#fff}
+nav button:focus-visible,select:focus-visible,.pr:focus-visible{outline:2px solid var(--am);outline-offset:2px}
+.card{background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.ctl{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.ctl label{display:block;color:var(--mu);font-size:12.5px;margin-bottom:4px}
+select{width:100%;background:var(--pn2);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px;font:inherit;font-weight:600}
+.big{font-weight:700;font-size:17px}
+.up{color:var(--gr)}.dn{color:var(--rd)}.wt{color:var(--am)}
+.tag{display:inline-block;min-width:58px;text-align:center;font-weight:700;font-size:13px;border-radius:6px;padding:3px 8px;color:#fff}
+.tag.BUY{background:var(--gr)}.tag.SELL{background:var(--rd)}.tag.WAIT{background:var(--am);color:#1a1200}
+.mid{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:12px}
+.ch h3{font-size:15px;margin-bottom:2px}
+.leg{font-size:12.5px;margin-bottom:6px}
+canvas{display:block;width:100%}
+#c{height:250px}#r{height:80px;border-top:1px solid var(--bd);margin-top:4px}
+.sg h3{font-size:15px;margin-bottom:10px}
+.sgb{width:100%;text-align:center;font-size:30px;font-weight:700;color:#fff;border-radius:10px;padding:14px 0;margin-bottom:6px}
+.sgb.BUY{background:var(--gr)}.sgb.SELL{background:var(--rd)}.sgb.WAIT{background:var(--am);color:#1a1200}
+.cf{text-align:center;color:var(--mu);margin-bottom:10px}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--bd)}
+.why{margin-top:10px;border:1px solid var(--bd);border-radius:8px;padding:8px 10px;font-size:13.5px;background:var(--pn2)}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px}
+.stats div{font-size:12.5px;color:var(--mu)}
+.stats b{display:block;color:var(--tx);font-size:16px;margin-top:2px}
+.side{display:flex;flex-direction:column;gap:14px}
+.side h3{font-size:15px;margin-bottom:8px}
+.pr{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px;border-radius:8px}
+.pr.on{background:var(--pn2)}
+.pr span:first-child{font-weight:600}
+.hs{display:grid;grid-template-columns:44px 1fr auto 18px;gap:8px;align-items:center;padding:6px 0;font-size:14px}
+.hs .t{color:var(--mu)}
+#api{display:none;margin-bottom:12px;font-size:14px}#api p{color:var(--mu);margin:6px 0}
+#api input{width:100%;background:var(--pn2);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:10px;font:inherit;margin:6px 0}
+#api .row{display:flex;gap:8px;flex-wrap:wrap}#api .row button{cursor:pointer;background:var(--bl);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;font-weight:600}
+#api .row button#kc{background:var(--pn2);color:var(--tx);border:1px solid var(--bd)}
+#how{display:none;margin-bottom:12px;font-size:14px;color:var(--mu)}
+footer{padding:12px 16px 20px;text-align:center;color:var(--mu);font-size:13px;border-top:1px solid var(--bd)}
+@media(max-width:1000px){.layout{grid-template-columns:minmax(0,1fr)}nav{flex-direction:row;overflow-x:auto}nav button{white-space:nowrap}}
+@media(max-width:700px){.ctl{grid-template-columns:1fr 1fr}.mid{grid-template-columns:minmax(0,1fr)}.stats{grid-template-columns:repeat(3,1fr)}h1{font-size:19px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Live Forex Signal Bot</h1><p>1 मिनट की कैंडल के लिए सिग्नल: अगली कैंडल के लिए BUY / SELL / WAIT</p></div>
+  <div class="badges"><span class="pill" id="mode">DEMO डेटा</span><span>Free | Mobile Friendly</span></div>
+</header>
+<div class="layout">
+  <nav aria-label="मेन्यू">
+    <button class="on" data-go="top">डैशबोर्ड</button>
+    <button data-go="hist">सिग्नल हिस्ट्री</button>
+    <button data-go="api">API सेटअप</button>
+    <button data-go="how">कैसे उपयोग करें</button>
+  </nav>
+  <main>
+    <div id="api" class="card"><b>API सेटअप (Twelve Data)</b>
+      <p>twelvedata.com पर मुफ़्त खाता बनाकर API key लें और यहाँ डालें। Key सिर्फ़ आपके इसी ब्राउज़र में सेव होती है। मुफ़्त प्लान में 8 कॉल प्रति मिनट मिलते हैं और यह बॉट हर मिनट 6 लेता है।</p>
+      <input id="key" type="password" placeholder="API key" autocomplete="off" aria-label="API key">
+      <div class="row"><button id="ks">सेव और कनेक्ट करें</button><button id="kc">key हटाएँ</button></div>
+      <p id="kst" aria-live="polite"></p></div>
+    <div id="how" class="card"><b>सिग्नल कैसे बनता है:</b> जब EMA 9, EMA 21 से ऊपर हो और RSI 50 से ऊपर (पर 75 से नीचे) हो तो BUY। उलटी स्थिति में SELL। बाकी स्थिति में WAIT। यह डेमो में नकली (simulated) कीमतों पर चलता है।</div>
+    <div class="ctl">
+      <div class="card"><label for="pairSel">चुना हुआ पेयर</label><select id="pairSel"></select></div>
+      <div class="card"><label for="tfSel">टाइमफ्रेम</label><select id="tfSel"><option value="60">1 Minute</option><option value="300">5 Minute</option><option value="900">15 Minute</option></select></div>
+      <div class="card"><label>ट्रेंड</label><div class="big" id="trend"></div></div>
+      <div class="card"><label>अगला सिग्नल</label><div style="display:flex;align-items:center;gap:10px"><span class="tag" id="nxt"></span><span class="big num" id="cd"></span></div></div>
+    </div>
+    <div class="mid">
+      <div class="card ch">
+        <h3 id="ct"></h3>
+        <div class="leg"><span style="color:var(--bl)">━ EMA 9</span> &nbsp; <span style="color:var(--or)">━ EMA 21</span></div>
+        <canvas id="c" aria-label="कैंडल चार्ट" role="img"></canvas>
+        <canvas id="r" aria-label="RSI चार्ट" role="img"></canvas>
+      </div>
+      <div class="card sg">
+        <h3>अगली कैंडल के लिए सिग्नल</h3>
+        <div class="sgb" id="sgb"></div>
+        <div class="cf" id="cf"></div>
+        <div class="kv"><span>EMA 9</span><b class="num" id="e9"></b></div>
+        <div class="kv"><span>EMA 21</span><b class="num" id="e21"></b></div>
+        <div class="kv"><span>RSI (14)</span><b class="num" id="rs"></b></div>
+        <div class="kv"><span>सैद्धांतिक स्थिति</span><b id="st"></b></div>
+        <div class="why" id="why"></div>
+      </div>
+    </div>
+    <div class="card stats">
+      <div>बिड<b class="num" id="bid"></b></div><div>आस्क<b class="num" id="ask"></b></div><div>स्प्रेड<b class="num" id="spr"></b></div>
+      <div>डेली हाई<b class="num" id="dh"></b></div><div>डेली लो<b class="num" id="dl"></b></div><div>अपडेट समय<b class="num" id="upd"></b></div>
+    </div>
+  </main>
+  <aside class="side">
+    <div class="card"><h3>सभी लाइव Forex Pairs</h3><div id="pairs"></div></div>
+    <div class="card" id="hist"><h3>हाल के सिग्नल (Signal History)</h3><div id="hl"></div></div>
+  </aside>
+</div>
+<footer id="ft">यह केवल संकेत (Signal) है। यह किसी भी प्रकार की ट्रेडिंग सलाह नहीं है। डेमो में दिख रही कीमतें नकली हैं।</footer>
+<script>
+const $=id=>document.getElementById(id);
+const P=[["EUR/USD",1.0852,"🇪🇺🇺🇸",4],["GBP/USD",1.2710,"🇬🇧🇺🇸",4],["USD/JPY",151.20,"🇺🇸🇯🇵",3],["AUD/USD",0.6540,"🇦🇺🇺🇸",4],["USD/CAD",1.3650,"🇺🇸🇨🇦",4],["USD/CHF",0.8820,"🇺🇸🇨🇭",4]];
+const S={};let sel=0,dur=60,prevLeft=0,hist=[],live=false,KEY="",lastT="";
+const IV={60:"1min",300:"5min",900:"15min"};
+const R=()=>Math.random()-.5;
+function ema(a,n){const k=2/(n+1);let e=a[0];return a.map(v=>e=v*k+e*(1-k))}
+function rsiS(a,n=14){const o=a.map(()=>NaN);let g=0,l=0;for(let i=1;i<a.length;i++){const d=a[i]-a[i-1],u=Math.max(d,0),w=Math.max(-d,0);if(i<=n){g+=u/n;l+=w/n}else{g=(g*(n-1)+u)/n;l=(l*(n-1)+w)/n}if(i>=n)o[i]=l===0?100:100-100/(1+g/l)}return o}
+P.forEach(([nm,b,f,dg],i)=>{const vol=b*0.00012,dr=R()*0.5;let p=b,c=[];for(let k=0;k<70;k++){const o=p;p=o+(R()+dr*0.4)*vol*3;c.push({o,c:p,h:Math.max(o,p)+Math.random()*vol,l:Math.min(o,p)-Math.random()*vol})}S[i]={vol,dr,c,cur:{o:p,c:p,h:p,l:p}}});
+function sig(i){const s=S[i],all=[...s.c,s.cur],cl=all.map(x=>x.c),e9=ema(cl,9).pop(),e21=ema(cl,21).pop(),r=rsiS(cl).pop(),p=s.cur.c;let t="WAIT";if(e9>e21&&r>50&&r<75)t="BUY";else if(e9<e21&&r<50&&r>25)t="SELL";const gap=Math.abs(e9-e21)/p*20000,cf=t==="WAIT"?Math.round(40+Math.min(15,gap)):Math.round(Math.min(95,55+gap+Math.abs(r-50)*0.6));return{t,cf,e9,e21,r,up:e9>e21,p}}
+const tm=d=>d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+const fx=(v,i)=>v.toFixed(P[i][3]);
+function seed(){const now=Date.now();for(let k=0;k<5;k++){const i=(k*3)%6;hist.push({t:tm(new Date(now-(k+1)*60000)),n:P[i][0],s:sig(i).t})}}
+function build(){$("pairSel").innerHTML=P.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join("")}
+function render(){
+  const g=sig(sel),s=S[sel],d=P[sel][3],now=new Date();
+  $("trend").textContent=g.up?"▲ Bullish":"▼ Bearish";$("trend").className="big "+(g.up?"up":"dn");
+  $("nxt").textContent=g.t;$("nxt").className="tag "+g.t;
+  const left=dur-Math.floor(Date.now()/1000)%dur;$("cd").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0");
+  $("ct").textContent=P[sel][0]+" | "+(dur>=60?dur/60+"m":dur+"s");
+  $("sgb").textContent=(g.t==="BUY"?"↑ ":g.t==="SELL"?"↓ ":"")+g.t;$("sgb").className="sgb "+g.t;
+  $("cf").textContent="विश्वास स्तर: "+g.cf+"%";
+  $("e9").textContent=fx(g.e9,sel);$("e21").textContent=fx(g.e21,sel);$("rs").textContent=g.r.toFixed(1);
+  $("st").textContent=g.up?"Uptrend":"Downtrend";$("st").className=g.up?"up":"dn";
+  $("why").textContent=g.t==="BUY"?"✔ ट्रेंड ऊपर की ओर है, EMA 9 > EMA 21 और RSI 50 से ऊपर है।":g.t==="SELL"?"✔ ट्रेंड नीचे की ओर है, EMA 9 < EMA 21 और RSI 50 से नीचे है।":"संकेत साफ़ नहीं है। अगली कैंडल का इंतज़ार करें।";
+  const sp=d===3?0.012:0.0001,all=[...s.c,s.cur];
+  $("bid").textContent=fx(g.p,sel);$("ask").textContent=live?"—":fx(g.p+sp,sel);$("spr").textContent=live?"—":sp.toFixed(d===3?3:4);
+  $("dh").textContent=fx(Math.max(...all.map(x=>x.h)),sel);$("dl").textContent=fx(Math.min(...all.map(x=>x.l)),sel);$("upd").textContent=live&&lastT?lastT:now.toLocaleTimeString("en-GB");
+  $("pairs").innerHTML=P.map((p,i)=>{const t=sig(i).t;return`<button class="pr ${i===sel?"on":""}" data-i="${i}"><span>${p[2]} ${p[0]}</span><span class="tag ${t}">${t}</span></button>`}).join("");
+  $("hl").innerHTML=hist.slice(0,6).map(h=>`<div class="hs"><span class="t num">${h.t}</span><span>${h.n}</span><span class="tag ${h.s}">${h.s}</span><span class="${h.s==="BUY"?"up":h.s==="SELL"?"dn":"wt"}">${h.s==="BUY"?"▲":h.s==="SELL"?"▼":"–"}</span></div>`).join("");
+  draw()}
+function setup(cv){const r=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*r;cv.height=H*r;const x=cv.getContext("2d");x.scale(r,r);x.clearRect(0,0,W,H);return{x,W,H}}
+function draw(){
+  const s=S[sel],all=[...s.c,s.cur],cl=all.map(a=>a.c),e9=ema(cl,9),e21=ema(cl,21),rs=rsiS(cl),N=window.innerWidth<700?24:36,st=all.length-N,vis=all.slice(st),AX=54;
+  const{x,W,H}=setup($("c"));
+  let mn=Infinity,mx=-Infinity;vis.forEach(v=>{mn=Math.min(mn,v.l);mx=Math.max(mx,v.h)});e9.slice(st).concat(e21.slice(st)).forEach(v=>{mn=Math.min(mn,v);mx=Math.max(mx,v)});
+  const Y=v=>H-8-(v-mn)/(mx-mn)*(H-16),step=(W-AX)/N,cw=Math.max(2,step*.55);
+  x.font="11px Hind,sans-serif";x.textBaseline="middle";
+  for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4,y=Y(v);x.strokeStyle="#1b2f4a";x.beginPath();x.moveTo(0,y);x.lineTo(W-AX,y);x.stroke();x.fillStyle="#8aa0bd";x.fillText(fx(v,sel),W-AX+6,y)}
+  vis.forEach((v,i)=>{const cx=i*step+step/2,up=v.c>=v.o;x.strokeStyle=x.fillStyle=up?"#12b76a":"#f04438";x.beginPath();x.moveTo(cx,Y(v.h));x.lineTo(cx,Y(v.l));x.stroke();x.fillRect(cx-cw/2,Math.min(Y(v.o),Y(v.c)),cw,Math.max(1.5,Math.abs(Y(v.o)-Y(v.c))))});
+  [[e9,"#2e90fa"],[e21,"#f79009"]].forEach(([e,c])=>{x.strokeStyle=c;x.lineWidth=1.6;x.beginPath();e.slice(st).forEach((v,i)=>{const px=i*step+step/2;i?x.lineTo(px,Y(v)):x.moveTo(px,Y(v))});x.stroke();x.lineWidth=1});
+  const py=Y(s.cur.c);x.fillStyle="#2e90fa";x.fillRect(W-AX,py-9,AX,18);x.fillStyle="#fff";x.fillText(fx(s.cur.c,sel),W-AX+4,py);
+  const q=setup($("r")),y2=v=>q.H-6-(v/100)*(q.H-12);
+  q.x.font="11px Hind,sans-serif";q.x.textBaseline="middle";q.x.setLineDash([4,4]);q.x.strokeStyle="#2c4468";
+  [30,50,70].forEach(v=>{q.x.beginPath();q.x.moveTo(0,y2(v));q.x.lineTo(q.W-AX,y2(v));q.x.stroke();q.x.fillStyle="#8aa0bd";q.x.fillText(v,q.W-AX+6,y2(v))});
+  q.x.setLineDash([]);q.x.strokeStyle="#a78bfa";q.x.lineWidth=1.6;q.x.beginPath();let f=1;rs.slice(st).forEach((v,i)=>{if(isNaN(v))return;const px=i*step+step/2;f?q.x.moveTo(px,y2(v)):q.x.lineTo(px,y2(v));f=0});q.x.stroke();q.x.fillStyle="#8aa0bd";q.x.fillText("RSI (14)",4,8)}
+function tick(){
+  if(!live)Object.values(S).forEach(s=>{const c=s.cur;c.c+=(R()+s.dr*0.05)*s.vol*0.9;c.h=Math.max(c.h,c.c);c.l=Math.min(c.l,c.c)});
+  const left=dur-Math.floor(Date.now()/1000)%dur;
+  if(left>prevLeft&&prevLeft!==0){const i=hist.length%6,g=sig(i);hist.unshift({t:tm(new Date()),n:P[i][0],s:g.t});if(live)setTimeout(fetchLive,3000);else Object.values(S).forEach(s=>{s.c.push(s.cur);s.c.shift();s.cur={o:s.cur.c,c:s.cur.c,h:s.cur.c,l:s.cur.c}})}
+  prevLeft=left;render()}
+const kst=(m,ok)=>{$("kst").textContent=m;$("kst").style.color=ok?"var(--gr)":"var(--am)"};
+function setMode(){const m=$("mode");m.textContent=live?"LIVE":"DEMO डेटा";m.style.background=live?"var(--gr)":"";m.style.color=live?"#fff":"";$("ft").textContent="यह केवल संकेत (Signal) है। यह किसी भी प्रकार की ट्रेडिंग सलाह नहीं है। "+(live?"डेटा: Twelve Data।":"डेमो में दिख रही कीमतें नकली हैं।")}
+async function fetchLive(){
+  if(!KEY)return;
+  try{
+    const u="https://api.twelvedata.com/time_series?symbol="+P.map(p=>p[0]).join(",")+"&interval="+IV[dur]+"&outputsize=70&apikey="+encodeURIComponent(KEY);
+    const j=await(await fetch(u)).json();
+    if(j.status==="error"||(j.code&&!j.values&&!j["EUR/USD"]))throw new Error(j.message||"API में समस्या");
+    const nv=P.map(p=>{const d=j[p[0]];if(!d||d.status==="error"||!d.values)throw new Error((d&&d.message)||p[0]+" का डेटा नहीं मिला");return d.values.slice().reverse().map(x=>({o:+x.open,h:+x.high,l:+x.low,c:+x.close}))});
+    nv.forEach((v,i)=>{S[i].c=v.slice(0,-1);S[i].cur=v[v.length-1]});
+    const first=!live;live=true;lastT=new Date().toLocaleTimeString("en-GB");if(first){hist=[];seed()}
+    kst("✔ कनेक्ट हो गया। लाइव डेटा चल रहा है। (बाज़ार बंद हो तो कीमतें नहीं बदलेंगी)",1);
+  }catch(e){kst("✖ "+e.message+(live?" (पुराना लाइव डेटा दिख रहा है)":""))}
+  setMode();render()}
+$("ks").onclick=()=>{KEY=$("key").value.trim();if(!KEY){kst("पहले API key डालें");return}try{localStorage.setItem("tdkey",KEY)}catch(e){}kst("कनेक्ट हो रहा है…");fetchLive()};
+$("kc").onclick=()=>{KEY="";live=false;lastT="";try{localStorage.removeItem("tdkey")}catch(e){}$("key").value="";kst("key हटा दी गई। डेमो मोड चालू है।");setMode();render()};
+build();seed();render();setInterval(tick,1000);
+try{KEY=localStorage.getItem("tdkey")||""}catch(e){}
+if(KEY){$("key").value=KEY;fetchLive()}
+setInterval(fetchLive,60000);
+$("pairSel").onchange=e=>{sel=+e.target.value;render()};
+$("tfSel").onchange=e=>{dur=+e.target.value;prevLeft=0;render();if(KEY)fetchLive()};
+$("pairs").onclick=e=>{const b=e.target.closest(".pr");if(b){sel=+b.dataset.i;$("pairSel").value=sel;render()}};
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on");const g=b.dataset.go;$("how").style.display=g==="how"?"block":"none";$("api").style.display=g==="api"?"block":"none";if(g==="hist")$("hist").scrollIntoView({behavior:"smooth"});if(g==="top")scrollTo({top:0,behavior:"smooth"})});
+addEventListener("resize",draw);
+</script>
+</body>
+</html>
